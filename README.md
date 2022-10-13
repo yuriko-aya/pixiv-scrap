@@ -1,6 +1,6 @@
 # pixiv-scrap
 
-Scrapping from pixing based on given tags
+Scrapping from pixiv based on given tags
 
 ## Usage
 

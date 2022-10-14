@@ -15,6 +15,7 @@ positional arguments:
 options:
   -h, --help     show this help message and exit
   --depth DEPTH  Maximum number of page
+  --r18          Download R-18 only
 ```
 
 ### Example

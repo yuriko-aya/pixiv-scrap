@@ -21,7 +21,7 @@ options:
 ### Example
 
 ```bash
-python3 pixiv-scrap.py 魔女の旅々10000users入り --depth 2
+python3 pixiv-scrap.py 魔女の旅々10000users入り --depth 2 --r18
 ```
 
 ## REQUIREMENTS

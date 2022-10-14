@@ -16,6 +16,7 @@ parser = argparse.ArgumentParser(description='Scrap images from pixiv')
 parser.add_argument('keyword', metavar='keyword', type=str, help='Search/tags keyword')
 parser.add_argument('--depth', type=int, help='Maximum number of page')
 parser.add_argument('--r18', action='store_true', help='Download R-18 only')
+parser.add_argument('--save', action='store_true', help='Download save artworks only')
 args = parser.parse_args()
 
 key = args.keyword
@@ -28,8 +29,12 @@ headers = {
 
 pathlib.Path(key).mkdir(exist_ok=True)
 
-if args.r18:
+if args.r18 and args.safe:
+    search_mode = 'all'
+elif args.r18 and not args.safe:
     search_mode = 'r18'
+elif args.safe and not args.r18:
+    search_mode = 'safe'
 else:
     search_mode = 'all'
 

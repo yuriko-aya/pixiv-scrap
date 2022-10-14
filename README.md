@@ -5,7 +5,7 @@ Scrapping from pixiv based on given tags
 ## Usage
 
 ```bash
-usage: python3 pixiv-scrap.py [-h] [--depth DEPTH] keyword
+usage: python3 pixiv-scrap.py [-h] [--depth DEPTH] [--r18] [--save] keyword
 
 Scrap images from pixiv
 
@@ -16,6 +16,7 @@ options:
   -h, --help     show this help message and exit
   --depth DEPTH  Maximum number of page
   --r18          Download R-18 only
+  --save         Download save artworks only
 ```
 
 ### Example

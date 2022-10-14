@@ -15,6 +15,7 @@ from urllib.parse import quote as url_encode
 parser = argparse.ArgumentParser(description='Scrap images from pixiv')
 parser.add_argument('keyword', metavar='keyword', type=str, help='Search/tags keyword')
 parser.add_argument('--depth', type=int, help='Maximum number of page')
+parser.add_argument('--r18', action='store_true', help='Download R-18 only')
 args = parser.parse_args()
 
 key = args.keyword
@@ -26,6 +27,11 @@ headers = {
 }
 
 pathlib.Path(key).mkdir(exist_ok=True)
+
+if args.r18:
+    search_mode = 'r18'
+else:
+    search_mode = 'all'
 
 def file_exists(dir, image_id, page_count):
     file_list = glob(f'{dir}/*')
@@ -41,24 +47,28 @@ cookies_file = str(pathlib.Path(__file__).parent.absolute() / 'cookies.txt')
 cookies = MozillaCookieJar(cookies_file)
 cookies.load()
 session = requests.Session()
-session.cookies = MozillaCookieJar('cookies.txt')
+session.cookies = MozillaCookieJar(cookies_file)
 session.cookies.load()
 
-base_url = f'https://www.pixiv.net/ajax/search/illustrations/{key}?word={key}&order=date_d&mode=all&p=1&s_mode=s_tag_full&type=illust_and_ugoira'
+base_url = f'https://www.pixiv.net/ajax/search/illustrations/{key}?word={key}&order=date_d&mode={search_mode}&p=1&s_mode=s_tag_full&type=illust_and_ugoira'
 
 headers.update({'referer': f'https://www.pixiv.net/en/tags/{encoded_key}/illustrations?p=1'})
 search_result = session.get(base_url, cookies=cookies, headers=headers).json()
 illust_total = search_result['body']['illust']['total']
 total_page = math.ceil(illust_total/60)
+total_page_orig = total_page
 if total_page == 0:
     print('No image found')
     sys.exit()
 if args.depth:
     total_page = args.depth
+print(f'Downloading artworks with keyword {key}')
+print(f'Found {illust_total} artworks span acros {total_page_orig} pages')
+print(f'Will download {total_page} of {total_page_orig} pages')
 for page in range(1, total_page+1):
     print(f'Downloading page {page}...')
-    time.sleep(5)
-    url = f'https://www.pixiv.net/ajax/search/illustrations/{key}?word={key}&order=date_d&mode=all&p={page}&s_mode=s_tag_full&type=illust_and_ugoira'
+    time.sleep(1)
+    url = f'https://www.pixiv.net/ajax/search/illustrations/{key}?word={key}&order=date_d&mode={search_mode}&p={page}&s_mode=s_tag_full&type=illust_and_ugoira'
     json_data = session.get(url, cookies=cookies, headers=headers).json()
     illust_data = json_data['body']['illust']['data']
     for illust in illust_data:
@@ -69,7 +79,7 @@ for page in range(1, total_page+1):
         if file_exists(key, illust_id, page_count):
             print(f'Image {illust_id}: {illust_title} already downloaded')
             continue
-        time.sleep(2)
+        time.sleep(1)
         if illust['illustType'] == 2:
             ugiora_data = session.get(f"https://www.pixiv.net/ajax/illust/{illust_id}/ugoira_meta", cookies=cookies, headers=headers).json()
             img_urls = [ugiora_data['body']['originalSrc']]
@@ -84,7 +94,7 @@ for page in range(1, total_page+1):
                 img_urls.append(content['urls']['original'])
         page_index = 0
         for img_url in img_urls:
-            time.sleep(2)
+            time.sleep(1)
             if page_index == 0:
                 page_num = ''
             else:

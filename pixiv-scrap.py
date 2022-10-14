@@ -16,7 +16,7 @@ parser = argparse.ArgumentParser(description='Scrap images from pixiv')
 parser.add_argument('keyword', metavar='keyword', type=str, help='Search/tags keyword')
 parser.add_argument('--depth', type=int, help='Maximum number of page')
 parser.add_argument('--r18', action='store_true', help='Download R-18 only')
-parser.add_argument('--save', action='store_true', help='Download save artworks only')
+parser.add_argument('--safe', action='store_true', help='Download save artworks only')
 args = parser.parse_args()
 
 key = args.keyword

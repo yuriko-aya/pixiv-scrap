@@ -77,6 +77,9 @@ for page in range(1, total_page+1):
     json_data = session.get(url, cookies=cookies, headers=headers).json()
     illust_data = json_data['body']['illust']['data']
     for illust in illust_data:
+        ads_container = illust.get('isAdContainer')
+        if ads_container:
+            continue
         illust_id = illust['id']
         illust_title = illust['title']
         page_count = illust['pageCount']
@@ -106,7 +109,7 @@ for page in range(1, total_page+1):
                 page_num = f'_p{page_index}'
             file_ext = os.path.splitext(img_url)[1]
             title_clean = illust_title.replace('/', '_')
-            file_name = f'{title_clean}_{illust_id}{page_num}{file_ext}'
+            file_name = f'{illust_id}_{title_clean}_{page_num}{file_ext}'
             res = session.get(img_url, cookies=cookies, headers=headers, stream=True)
             with open(os.path.join(key, file_name), "wb") as file:
                 for chunk in res.iter_content(chunk_size=1048576):
